@@ -6,4 +6,20 @@ create a index.js file.
 now to initialize this as a git init
 Now write and test your endpoints along with creating an instance of an express application 
 Now create a .gitignore file
-for pushing 
+first add the files on github as git add -A 
+then commit  the changes git commit -m "feat: Adding apis to get users and users id"
+Now go to github and create a new repositary
+now copy the url to clone the repositary to and connect to this 
+--folder...do git remote add origin https://......<-paste the URL
+now do finally push the code as git push -u origin master
+Now comes the deployment on the vercel
+Now go to repositary you have to host
+then click on settings
+under general :->under security=>Secrets and variables->actions
+under repositary secret create a new repositary secret
+Go to get the vercel token we need to generate the token
+for that go to vercel->account settings->Setting->tokens->and generate a new token
+token-> 4o4bEGTUd6t4Mjb1wAcxsiY3
+copy the token from vercel and paste 
+now create a vercel.json file
+
