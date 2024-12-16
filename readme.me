@@ -19,7 +19,30 @@ under general :->under security=>Secrets and variables->actions
 under repositary secret create a new repositary secret
 Go to get the vercel token we need to generate the token
 for that go to vercel->account settings->Setting->tokens->and generate a new token
-token-> 4o4bEGTUd6t4Mjb1wAcxsiY3
+
 copy the token from vercel and paste 
 now create a vercel.json file
+and add,commit changes and push it to the github
+Now finally go to vercel go to the dashboard and create a new project
+after importing it is finally deployed on vercel
+Now comes the next section:
+npm install sequelize pg dotenv
+npm install --save-dev sequelize-cli nodemon
+npx sequelize-cli init
+now we need to create supabase account and connect sequelize to 
+--to supabase 
+now create .env  file after creating an organisation and new project setup
+In that .env declare an environment variables:
+DB_USER
+DB_PASSWORD
+DB_NAME
+DB_HOST
+DB_PORT=5432
+PORT=3000
+Go to supabase dashboard => Go to settings=>project settings=>database
+--configuration..copy the environment variables
+In config.js import dotenv require("dotenv").config();
+Declare the username,pasword,database,host,post,dialect as postgres and logging as false,
+assign using process.env.then write the variable name from .env
+declare a new folder=>lib=>sequelize.js=>sequelize instance
 
