@@ -29,6 +29,9 @@ Now comes the next section:
 npm install sequelize pg dotenv
 npm install --save-dev sequelize-cli nodemon
 npx sequelize-cli init
+npx sequelize-cli init  Initializes Sequelize in your project 
+by creating the necessary folders and files
+ (config, models, migrations, seeders)
 now we need to create supabase account and connect sequelize to 
 --to supabase 
 now create .env  file after creating an organisation and new project setup
@@ -39,10 +42,88 @@ DB_NAME
 DB_HOST
 DB_PORT=5432
 PORT=3000
+these are credentials needed to your postgresSql database which will be hosted on supabase
+How it's used: These values are loaded into the process.env object at runtime via 
+the dotenv package, 
+so they can be accessed by the rest of your codebase.
 Go to supabase dashboard => Go to settings=>project settings=>database
---configuration..copy the environment variables
+configuration..copy the environment variables
 In config.js import dotenv require("dotenv").config();
-Declare the username,pasword,database,host,post,dialect as postgres and logging as false,
+config/config.js will be used by sequelize to configure the connection
+to your postgresSql. It reads environment variables from .env to configure 
+the connection string
+dotenv is used to load the environment variables from .env file.
+development and production configurations are identical
+and hence they define the database connection settings.
+dialect: "postgres" specifies that you’re using PostgreSQL.
+logging: false disables logging SQL queries in the console.
+How it’s used:
+This configuration is later passed to Sequelize to initialize a connection to the 
+database.
+The configuration is environment-dependent 
+(e.g., for different database environments like local development or production).
+
+
+Declare the username,password,database,host,post,dialect as postgres and logging as false,
 assign using process.env.then write the variable name from .env
 declare a new folder=>lib=>sequelize.js=>sequelize instance
+Now coming to the lib/sequelize.js 
+This file is responsible for initializing the Sequelize connection using the 
+configuration set up earlier.
+Explanation:
+This code imports Sequelize, which is used to interact with the PostgreSQL database.
+config: This line selects the appropriate configuration (development or production) 
+based on the NODE_ENV environment variable.
+new Sequelize(): This creates a Sequelize instance using the database credentials 
+from the environment file.
+database, username, password: These are passed from the .env file.
+host: The host of your PostgreSQL database.
+dialect: "postgres": Specifies PostgreSQL as the database system.
+port: Port number to connect to PostgreSQL.
+logging: config.logging: Controls whether SQL queries should be logged 
+to the console.
+How it’s used:
+This is imported into other files where you need to interact with the database 
+(e.g., models, migrations).
 
+models/user.js:
+This file defines the structure of the user table in your database, 
+which will be used by Sequelize to interact with the table.
+Explanation:
+sequelize.define(): This function defines the schema for the user table.
+username: A unique string, which cannot be null.
+name: A string representing the user’s full name.
+repoCount: An integer representing the number of repositories the user has.
+location: A string representing where the user is located.
+timestamps: true: Sequelize will automatically add 
+createdAt and updatedAt fields to the table.
+How it’s used:
+This model represents the user table in the database, 
+and you can use this model to query, insert, or update user records.
+
+
+migrations/XXXXXXXXXXXXXX-create-user-table.js (Database Table Creation)
+This is a migration file used to create the users table in the database.
+ Sequelize migrations allow you to manage changes to your database schema over time 
+ (e.g., creating tables, modifying columns).
+up() is used to create the users table 
+queryInterface.createTable() creates the table and defines the columns (id, username, name, repoCount, location, createdAt, and updatedAt).
+down(): This function removes the users table in case you need to revert this migration.
+How it’s used:
+
+You run sequelize-cli db:migrate to apply this migration and create the users table.
+If you need to undo this, you run sequelize-cli db:migrate:undo
+
+
+seeders/XXXXXXXXXXXXXX-demo-users.js (Seeding Data)
+This file seeds initial data into the users table. Seeder files are used to insert demo data into the database for development or testing purposes.
+Explanation:
+up(): Seeds the users table with multiple records. The data contains fields like username, name, repoCount, etc.
+down(): Deletes all records from the users table to undo the seeding.
+How it’s used:
+
+To insert the seed data, you run npx sequelize-cli db:seed:all.
+To delete the seed data, you run npx sequelize-cli db:seed:undo:all
+
+The centre of the project root->index.js
+IT runs an express instance
