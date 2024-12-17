@@ -27,7 +27,11 @@ Now finally go to vercel go to the dashboard and create a new project
 after importing it is finally deployed on vercel
 Now comes the next section:
 npm install sequelize pg dotenv
+pg->postgreSql driver for node.js which allows sequelize to communicate with postgresSql
 npm install --save-dev sequelize-cli nodemon
+sequelize-cli is a command line tool for sequelize that helps generate configurations,
+models,migrations,seeders
+
 npx sequelize-cli init
 npx sequelize-cli init  Initializes Sequelize in your project 
 by creating the necessary folders and files
@@ -103,9 +107,31 @@ and you can use this model to query, insert, or update user records.
 
 
 migrations/XXXXXXXXXXXXXX-create-user-table.js (Database Table Creation)
-This is a migration file used to create the users table in the database.
+This is a migration file used to create or modifying the users table in the database.
  Sequelize migrations allow you to manage changes to your database schema over time 
  (e.g., creating tables, modifying columns).
+ Under the hood migrations translate javascript code into SQL commands to update database
+ How migrations work:
+ Each migration file checks the specific database change
+ sequelize creates a table called as SequelizeMeta in your database to keep track
+ of migrations 
+ This table stores the filenames of the executed migrations.
+When you run npx sequelize-cli db:migrate:
+Sequelize checks which migrations have already been applied (using SequelizeMeta).
+It then applies only new migration files to the database.(tracks pending changes)
+Applied migrations are logged in SequelizeMeta.
+Actually when you run the npx sequelize-cli db:migrate 
+sequelize checks the migrations folder for migration files
+It compares these files against the entries in sequelize metaTable
+IF the migration file is not found then only sequelize executes it.
+after executing migrations sequelize logs its filename into SequelizeMeta table to 
+avoid running it again.
+If there is no migrations were executed message that means that 
+it did not found the migrations files. the current status was already in SequelizeMeta
+So it is important to generate a new migrations using below command :
+npx sequelize-cli migration:generate --name create-user-table
+then do npx sequelize-cli db:migrate
+
 up() is used to create the users table 
 queryInterface.createTable() creates the table and defines the columns (id, username, name, repoCount, location, createdAt, and updatedAt).
 down(): This function removes the users table in case you need to revert this migration.
@@ -126,4 +152,11 @@ To insert the seed data, you run npx sequelize-cli db:seed:all.
 To delete the seed data, you run npx sequelize-cli db:seed:undo:all
 
 The centre of the project root->index.js
-IT runs an express instance
+It finally runs an express application
+
+Flow-
+Firstly the dependencies are installed and environment variables are stored in 
+dotenv file. then config file uses environment variables to connect to your database
+differentiating between development and production. Then data structure is defined in 
+sequelize instance in models/user.js.After model schema is defined the migration is 
+generated and applied. Then seed is generated and run. 
